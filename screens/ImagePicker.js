@@ -1,20 +1,38 @@
-import React, { useState } from 'react'
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, Button, ImageBackground, ScrollView, SafeAreaView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native'
+import * as ImageManipulator from 'expo-image-manipulator'
 import { ImageBrowser } from 'expo-image-picker-multiple'
-import { ImageManipulator } from 'expo-image-crop'
-import { MaterialIcons } from '@expo/vector-icons'
-
 
 const ImagePicker = ({ navigation }) => {
 
-    const [photos, setPhotos] = useState([])
-    const [select, setSelect] = useState(false)
-    const [editor, setEditor] = useState(null)
+    const [images, setImages] = useState([])
 
-    const updatePhotos = async (outputUri) => {
-        let tempPhotos = photos
-        tempPhotos[editor.index].uri = outputUri
-        await setPhotos(tempPhotos)
+    useEffect(() => {
+        if (images.length > 0){
+            navigation.navigate('CameraEditor', { images })
+        }
+    }, [images.length])
+
+    const _updateImages = async (tphotos) => {
+
+        const imagesProcessPromise = new Promise(async (resolve, reject) => {
+            let upImages = []
+            let counter = tphotos.length
+            await tphotos.forEach(async element => {
+                const image = await ImageManipulator.manipulateAsync(element.uri, [], {
+                    base64: true
+                })
+                counter--
+                upImages = [...upImages, image]
+                if (counter == 0){
+                    resolve(upImages)
+                }
+            });
+
+        })
+
+        Promise.resolve(imagesProcessPromise).then((upImages) => setImages(upImages))
+
     }
 
     const SelectPicker = () => {
@@ -23,28 +41,15 @@ const ImagePicker = ({ navigation }) => {
             <ActivityIndicator size="large" color={'#0580FF'} style={{ marginRight: 20 }} />
         )
 
-        const imagesCallback = (callback) => {
+        const imagesCallback = async(callback) => {
             navigation.setOptions({
                 headerRight: () => _getHeaderLoader()
             })
 
-            callback.then(async (photos) => {
-                const cPhotos = [];
-                for (let photo of photos) {
-                    cPhotos.push({
-                        uri: photo.uri,
-                        name: photo.filename,
-                        type: 'image/jpg'
-                    })
-                }
-                await setPhotos(cPhotos)
-                await setSelect(true)
-                navigation.setOptions({
-                    headerRight: null,
-                    title: "Edit Images",
-                })
-            })
-                .catch((e) => console.log(e));
+            await callback.then((tphotos) => {
+                _updateImages(tphotos)
+
+            }).catch((e) => console.log(e));
         }
 
         const _renderDoneButton = (count, onSubmit) => {
@@ -54,12 +59,11 @@ const ImagePicker = ({ navigation }) => {
             </TouchableOpacity>
         }
 
-        const updateHandler = (count, onSubmit) => {
+        const updateHandler = async (count, onSubmit) => {
             navigation.setOptions({
                 title: `Selected ${count} files`,
                 headerRight: () => _renderDoneButton(count, onSubmit)
             });
-
         };
 
         return (
@@ -79,73 +83,10 @@ const ImagePicker = ({ navigation }) => {
         )
     }
 
-    const EditorComponent = () => {
-
-        const onToggleModal = () => {
-            setEditor(null)
-        }
-
-        const setUpdated = async (uri, index) => {
-
-            await setPhotos(updPhotos => {
-                const i = editor?.index
-                const tempPhotos = updPhotos.map((photo, index) => {
-                    if (index == i) {
-                        photo.uri = uri.uri
-                        return photo
-                    } else {
-                        return photo
-                    }
-                })
-
-                return tempPhotos
-            })
-        }
-
-        return (
-            <ImageManipulator
-                photo={{ uri: editor?.photo.uri }}
-                isVisible={true}
-                onPictureChoosed={(uri) => setUpdated(uri)}
-                onToggleModal={onToggleModal}
-            />
-        )
-    }
-
-    const EditScreen = ({ edited, index }) => {
-        return (
-
-            editor?.visible ? <EditorComponent /> : (
-
-
-                <SafeAreaView style={styles.container}>
-                    <ScrollView style={{ height: "70%", width: Dimensions.get('screen').width, flexDirection: "row", flexWrap: "wrap" }}>
-                    {
-                            photos.map((photo, i) => {
-                                return (
-                                    <TouchableOpacity key={i} onPress={() => setEditor({ visible: true, photo: photo, index: i })} style={{borderWidth: 1}}>
-                                        <Image source={{ uri: photo.uri }} key={i} style={{ height: Dimensions.get('screen').width * 0.5, width: Dimensions.get('screen').width * 0.33 }} />
-                                    </TouchableOpacity>
-                                )
-                            })
-                    }
-                    </ScrollView>
-                    <View style={styles.bottomNav}>
-                        <TouchableOpacity style={styles.touchableNav} onPress={() => navigation.navigate('ImagePicker')}>
-                            <MaterialIcons name="picture-as-pdf" size={30} color="#fff" />
-                            <Text style={{ color: "#fff" }}>Export as PDF</Text>
-                        </TouchableOpacity>
-                    </View>
-                </SafeAreaView>
-            )
-
-        )
-    }
-
 
     return (
         <View style={{ flex: 1, height: Dimensions.get('screen').height, width: Dimensions.get('screen').width }}>
-            { select ? <EditScreen /> : <SelectPicker />}
+            <SelectPicker />
         </View>
     )
 }

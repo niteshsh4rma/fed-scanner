@@ -1,55 +1,64 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Platform, StatusBar, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Platform, StatusBar, SafeAreaView, ImageBackground, Dimensions, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import 'react-native-gesture-handler';
 import colors from '../colors';
-import RecentFiles from '../components/RecentFiles';
-import ImagePicker from 'react-native-image-crop-picker';
+import FedLogo from '../assets/fedscanner.png'
 
 const Main = ({ navigation }) => {
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView style={{ height: "70%", width: "100%" }}>
-                <RecentFiles />
-            </ScrollView>
-            <View style={styles.bottomNav}>
-                <TouchableOpacity style={styles.touchableNav} onPress={() => navigation.navigate('ImagePicker')}>
-                    <MaterialIcons name="camera" size={45} color="#fff" />
-                    <Text style={{ color: "#fff" }}>Camera</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.touchableNav} onPress={() => navigation.navigate('ImagePicker')}>
-                    <MaterialIcons name="photo-library" size={45} color="#fff" />
-                    <Text style={{ color: "#fff" }}>Library</Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
+        <View style={styles.container}>
+            <ImageBackground source={{ uri: "https://i.stack.imgur.com/JHYTI.jpg" }} style={styles.backgroundImage}>
+                <Image source={FedLogo} style={{ height: "20%", width: "65%", position: "absolute", top: "-5%", resizeMode: "contain", alignSelf: "center" }}/>
+                <View style={styles.bottomNav}>
+                    <TouchableOpacity style={styles.touchableNav} onPress={() => navigation.navigate('CameraScreen')}>
+                        <MaterialIcons name="camera" size={60} color={colors.blue} />
+                        <Text style={{ color: colors.blue }}>Camera</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.touchableNav} onPress={() => navigation.navigate('ImagePicker')}>
+                        <MaterialIcons name="photo-library" size={60} color={colors.blue} />
+                        <Text style={{ color: colors.blue }}>Library</Text>
+                    </TouchableOpacity>
+                </View>
+            </ImageBackground>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'transparent',
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        backgroundColor: "white",
+        paddingTop: StatusBar.currentHeight
     },
     bottomNav: {
-        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-evenly",
         flex: 1,
-        height: 50,
-        width: "60%",
         position: "absolute",
-        bottom: 20,
+        height: "50%",
+        justifyContent: "space-evenly",
+        width: "50%",
+        alignSelf: "center",
+        top: "40%",
         borderStyle: "solid",
-        backgroundColor: colors.blue,
-        borderRadius: 30,
-        elevation: 5
+        backgroundColor: "white",
+        borderRadius:300,
+        elevation: 70
     },
     touchableNav: {
         alignItems: "center"
+    },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'stretch',
+        width: "100%",
+        justifyContent: 'center',
+        height: Dimensions.get('screen').height *0.8,
+        bottom: 0,
+        position: "absolute"
     }
 });
 

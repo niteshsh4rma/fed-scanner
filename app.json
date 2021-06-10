@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "scannerfed",
+    "name": "Fed Scanner",
     "slug": "scannerfed",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash-svg.png",
+      "image": "./assets/fedscanner.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,11 +17,15 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.android.fedscanner",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.android.fedscanner",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       }
     },
