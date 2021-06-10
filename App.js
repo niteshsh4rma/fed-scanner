@@ -1,21 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import Main from './screens/Main';
+import { createStackNavigator } from '@react-navigation/stack';
+import ImagePicker from './screens/ImagePicker';
+import ImageEditor from './screens/ImageEditor'
 
 export default function App() {
+
+  const Stack = createStackNavigator()
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" options={{
+          headerTitle: "Fed Scanner",
+          headerTitleAlign: "center",
+        }} component={Main} />
+        <Stack.Screen name="ImagePicker" component={ImagePicker} />
+        <Stack.Screen name="ImageEditor" component={ImageEditor} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
