@@ -5,12 +5,9 @@ Fed Scanner is a cross platform mobile application for scanning and reshaping im
 <img alt="node-current (tag)" src="https://img.shields.io/node/v/yarn/latest">
 <img alt="npm" src="https://img.shields.io/npm/v/npm">
 
-# Live
-<a href="https://programocity.netlify.app">https://programocity.netlify.app</a>
-
 ## Installation
 
-Use the package manager [npm](https://npmjs.com) to install Programocity.
+Use the package manager [npm](https://npmjs.com) to install Fed Scanner.
 
 ```bash
 npm install
